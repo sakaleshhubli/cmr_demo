@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-hospital fa-2x"></i>
+                </div>
+                <h2 class="mb-0">{{ 'Edit' if hospital else 'Add' }} Hospital</h2>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label fw-bold">Hospital Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-hospital-alt"></i></span>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ hospital.name if hospital else '' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a hospital name.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label fw-bold">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" class="form-control" id="location" name="location"
+                                   value="{{ hospital.location if hospital else '' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a location.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="contact_number" class="form-label fw-bold">Contact Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="contact_number" name="contact_number"
+                                   value="{{ hospital.contact_number if hospital else '' }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a contact number.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="total_beds" class="form-label fw-bold">Total Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-bed"></i></span>
+                            <input type="number" class="form-control" id="total_beds" name="total_beds"
+                                   value="{{ hospital.total_beds if hospital else '' }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the total number of beds.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="available_beds" class="form-label fw-bold">Available Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-procedures"></i></span>
+                            <input type="number" class="form-control" id="available_beds" name="available_beds"
+                                   value="{{ hospital.available_beds if hospital else '' }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the number of available beds.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="icu_beds_total" class="form-label fw-bold">Total ICU Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lungs"></i></span>
+                            <input type="number" class="form-control" id="icu_beds_total" name="icu_beds_total"
+                                   value="{{ hospital.icu_beds.total if hospital else '' }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the total number of ICU beds.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="icu_beds_available" class="form-label fw-bold">Available ICU Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lungs-virus"></i></span>
+                            <input type="number" class="form-control" id="icu_beds_available" name="icu_beds_available"
+                                   value="{{ hospital.icu_beds.available if hospital else '' }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the number of available ICU beds.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('list_hospitals') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Hospitals
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>{{ 'Update' if hospital else 'Add' }} Hospital
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %} 

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}CareSync - Healthcare Management{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        padding: 4rem 0;
+    }
+    
+    .card {
+        transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .hospital-details p {
+        font-size: 0.9rem;
+    }
+    
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5em 0.8em;
+    }
+    
+    .services li {
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center py-5 bg-primary text-white">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">Welcome to CareSync</h1>
+        <p class="lead mb-4">Your Comprehensive Healthcare Management Solution</p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="{{ url_for('nursing_home_login') }}" class="btn btn-light btn-lg px-4 gap-3">Login</a>
+            <a href="{{ url_for('signup') }}" class="btn btn-outline-light btn-lg px-4">Register</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Why Choose CareSync?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-hospital-user fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Patient Management</h3>
+                        <p class="card-text">Efficiently manage patient records, track medical history, and monitor treatment progress.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-ambulance fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Emergency Response</h3>
+                        <p class="card-text">Quick access to ambulance services and emergency care coordination.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                        <h3 class="card-title">Real-time Updates</h3>
+                        <p class="card-text">Stay informed with live updates on bed availability and hospital status.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About CareSync Section -->
+<section class="about-section py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h2 class="mb-4">About CareSync</h2>
+                <p class="lead">CareSync is a revolutionary healthcare management platform designed to streamline patient care and hospital coordination.</p>
+                <p>Our platform connects nursing homes with hospitals, ensuring seamless patient transfers and efficient healthcare delivery. With real-time updates and comprehensive patient management tools, CareSync is transforming the way healthcare providers work together.</p>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-check text-primary me-2"></i> Secure patient data management</li>
+                    <li><i class="fas fa-check text-primary me-2"></i> Real-time hospital bed availability</li>
+                    <li><i class="fas fa-check text-primary me-2"></i> Emergency response coordination</li>
+                    <li><i class="fas fa-check text-primary me-2"></i> Comprehensive reporting tools</li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <img src="https://source.unsplash.com/random/600x400/?healthcare" alt="Healthcare" class="img-fluid rounded shadow">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hospitals Section -->
+<section class="hospitals-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Our Partner Hospitals</h2>
+        <div class="row g-4">
+            {% for hospital in hospitals %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title h5">{{ hospital.name }}</h3>
+                        <div class="hospital-details">
+                            <p class="mb-2"><i class="fas fa-map-marker-alt text-primary me-2"></i> {{ hospital.location }}</p>
+                            <p class="mb-2"><i class="fas fa-phone text-primary me-2"></i> {{ hospital.contact_number }}</p>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fas fa-bed text-primary me-2"></i> Beds: {{ hospital.available_beds }}/{{ hospital.total_beds }}</span>
+                                <span><i class="fas fa-procedures text-primary me-2"></i> ICU: {{ hospital.icu_beds.available }}/{{ hospital.icu_beds.total }}</span>
+                            </div>
+                        </div>
+                        <div class="specialties mb-3">
+                            <h4 class="h6 mb-2">Specialties</h4>
+                            <div class="d-flex flex-wrap gap-2">
+                                {% for specialty in hospital.specialties %}
+                                <span class="badge bg-primary">{{ specialty }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="services">
+                            <h4 class="h6 mb-2">Services</h4>
+                            <ul class="list-unstyled mb-0">
+                                {% if hospital.ambulance_services %}
+                                <li><i class="fas fa-ambulance text-success me-2"></i> Ambulance Service</li>
+                                {% endif %}
+                                {% if hospital.mental_health_support %}
+                                <li><i class="fas fa-brain text-success me-2"></i> Mental Health Support</li>
+                                {% endif %}
+                                {% if hospital.financial_assistance %}
+                                <li><i class="fas fa-hand-holding-usd text-success me-2"></i> Financial Assistance</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h2 class="mb-4">Get in Touch</h2>
+                <p class="lead mb-4">Have questions about CareSync? We're here to help!</p>
+                <a href="{{ url_for('contact') }}" class="btn btn-primary btn-lg">Contact Us</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

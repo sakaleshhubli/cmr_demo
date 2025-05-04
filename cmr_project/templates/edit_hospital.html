@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fas fa-hospital fa-2x"></i>
+                </div>
+                <h2 class="mb-0">Edit Hospital</h2>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" class="needs-validation" novalidate>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label fw-bold">Hospital Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-hospital-alt"></i></span>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="{{ hospital.name }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a hospital name.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label fw-bold">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                            <input type="text" class="form-control" id="location" name="location"
+                                   value="{{ hospital.location }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a location.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="contact_number" class="form-label fw-bold">Contact Number</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            <input type="tel" class="form-control" id="contact_number" name="contact_number"
+                                   value="{{ hospital.contact_number }}" required>
+                            <div class="invalid-feedback">
+                                Please provide a contact number.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="total_beds" class="form-label fw-bold">Total Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-bed"></i></span>
+                            <input type="number" class="form-control" id="total_beds" name="total_beds"
+                                   value="{{ hospital.total_beds }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the total number of beds.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="available_beds" class="form-label fw-bold">Available Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-procedures"></i></span>
+                            <input type="number" class="form-control" id="available_beds" name="available_beds"
+                                   value="{{ hospital.available_beds }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the number of available beds.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="icu_total" class="form-label fw-bold">Total ICU Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lungs"></i></span>
+                            <input type="number" class="form-control" id="icu_total" name="icu_total"
+                                   value="{{ hospital.icu_beds.total }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the total number of ICU beds.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label for="icu_available" class="form-label fw-bold">Available ICU Beds</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lungs-virus"></i></span>
+                            <input type="number" class="form-control" id="icu_available" name="icu_available"
+                                   value="{{ hospital.icu_beds.available }}" required min="0">
+                            <div class="invalid-feedback">
+                                Please provide the number of available ICU beds.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="specialties" class="form-label fw-bold">Specialties (comma separated)</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-stethoscope"></i></span>
+                            <input type="text" class="form-control" id="specialties" name="specialties" 
+                                   value="{{ hospital.specialties|join(', ') }}" required>
+                            <div class="invalid-feedback">
+                                Please provide at least one specialty.
+                            </div>
+                        </div>
+                        <small class="text-muted">Example: Cardiology, Neurology, Emergency</small>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Available Services</label>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ambulance_services" 
+                                       name="ambulance_services" {% if hospital.ambulance_services %}checked{% endif %}>
+                                <label class="form-check-label" for="ambulance_services">
+                                    <i class="fas fa-ambulance me-1"></i> Ambulance Services
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="mental_health_support" 
+                                       name="mental_health_support" {% if hospital.mental_health_support %}checked{% endif %}>
+                                <label class="form-check-label" for="mental_health_support">
+                                    <i class="fas fa-brain me-1"></i> Mental Health Support
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="financial_assistance" 
+                                       name="financial_assistance" {% if hospital.financial_assistance %}checked{% endif %}>
+                                <label class="form-check-label" for="financial_assistance">
+                                    <i class="fas fa-hand-holding-usd me-1"></i> Financial Assistance
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('list_hospitals') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Hospitals
+                            </a>
+                            <div>
+                                <button type="submit" class="btn btn-primary me-2">
+                                    <i class="fas fa-save me-2"></i>Update Hospital
+                                </button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="fas fa-trash-alt me-2"></i>Delete Hospital
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong>{{ hospital.name }}</strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ url_for('delete_hospital', hospital_id=hospital.hospital_id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt me-2"></i>Delete Hospital
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %} 

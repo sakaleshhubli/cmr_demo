@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-primary bg-opacity-10 border-bottom">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-hospital fa-2x me-3 text-primary"></i>
+                    <h2 class="mb-0 text-primary">Hospitals Management</h2>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary btn-sm active" id="filterAll">
+                        <i class="fas fa-list-ul me-1"></i> All
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="filterAvailable">
+                        <i class="fas fa-check-circle me-1"></i> Available
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="filterFull">
+                        <i class="fas fa-ban me-1"></i> Full
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="table-responsive">
+                <table class="table table-hover border" id="hospitalsTable">
+                    <thead class="table-primary bg-opacity-75">
+                        <tr>
+                            <th class="fw-semibold"><i class="fas fa-hospital-alt me-2 text-primary"></i>Name</th>
+                            <th class="fw-semibold"><i class="fas fa-map-marker-alt me-2 text-primary"></i>Location</th>
+                            <th class="fw-semibold"><i class="fas fa-phone me-2 text-primary"></i>Contact</th>
+                            <th class="fw-semibold"><i class="fas fa-bed me-2 text-primary"></i>Total Beds</th>
+                            <th class="fw-semibold"><i class="fas fa-procedures me-2 text-primary"></i>Available</th>
+                            <th class="fw-semibold"><i class="fas fa-lungs me-2 text-primary"></i>ICU Beds</th>
+                            <th class="fw-semibold"><i class="fas fa-cogs me-2 text-primary"></i>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hospital in hospitals %}
+                        <tr data-available="{{ hospital.available_beds > 0 }}" class="align-middle">
+                            <td class="fw-medium">{{ hospital.name }}</td>
+                            <td>{{ hospital.location }}</td>
+                            <td>{{ hospital.contact_number }}</td>
+                            <td>{{ hospital.total_beds }}</td>
+                            <td>
+                                <span class="badge rounded-pill bg-{{ 'info' if hospital.available_beds > 0 else 'secondary' }} bg-opacity-75">
+                                    {{ hospital.available_beds }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill bg-{{ 'primary' if hospital.icu_beds.available > 0 else 'secondary' }} bg-opacity-75">
+                                    {{ hospital.icu_beds.available }}/{{ hospital.icu_beds.total }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('edit_hospital', hospital_id=hospital.hospital_id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-primary" 
+                                            onclick="viewDetails('{{ hospital.hospital_id }}')">
+                                        <i class="fas fa-eye"></i> View
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="fas fa-hospital fa-3x mb-3 text-primary opacity-50"></i>
+                                    <p class="lead">No hospitals found</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    const filterButtons = document.querySelectorAll('.btn-group .btn');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => {
+                btn.classList.remove('btn-primary', 'active');
+                btn.classList.add('btn-outline-primary');
+            });
+            
+            // Add active class to clicked button
+            this.classList.remove('btn-outline-primary');
+            this.classList.add('btn-primary', 'active');
+            
+            // Apply filter
+            const filter = this.id.replace('filter', '').toLowerCase();
+            filterHospitals(filter);
+        });
+    });
+    
+    function filterHospitals(status) {
+        const rows = document.querySelectorAll('#hospitalsTable tbody tr');
+        rows.forEach(row => {
+            if (status === 'all') {
+                row.style.display = '';
+            } else if (status === 'available' && row.dataset.available === 'true') {
+                row.style.display = '';
+            } else if (status === 'full' && row.dataset.available === 'false') {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    function viewDetails(hospitalId) {
+        window.location.href = `/hospital/${hospitalId}/details`;
+    }
+</script>
+{% endblock %} 
