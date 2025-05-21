@@ -398,16 +398,6 @@ body {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #2c3e50;
-}
-
 .form-group input,
 .form-group textarea {
     width: 100%;
@@ -431,7 +421,7 @@ body {
     background-color: #2980b9;
 }
 
-/* Contact Cards */
+/* Contact & Resource Cards */
 .contact-card,
 .resource-card {
     background: white;
@@ -467,7 +457,9 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .patient-details,
-    .hospital-details {
+    .hospital-details,
+    .contact-container,
+    .form-grid {
         grid-template-columns: 1fr;
     }
 
@@ -480,15 +472,7 @@ body {
         font-size: 2rem;
     }
 
-    .contact-container {
-        grid-template-columns: 1fr;
-    }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .patient-info-grid {
-        grid-template-columns: 1fr;
+    .hero-actions {
+        flex-direction: column;
     }
 }
